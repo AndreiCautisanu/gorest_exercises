@@ -6,7 +6,9 @@ user = User()
 user.get_by_id(2783)
 print(user.name)
 
+print(user.get_all())
+
 
 post = Post()
-post.get_by_id(1373)
-print(post.__dict__)
+print(Post.get_all(user_id=3566))
+print(post)

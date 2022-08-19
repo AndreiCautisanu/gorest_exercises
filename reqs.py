@@ -75,4 +75,4 @@ new_user = {"id":99998,"name":"Test User","email":"john_delaney_4pres_2@gmail.co
 print(post('users', new_user).json())
 
 
-#print(get_by_id('users', 99998))
+print(get_by_id('users', 99998))

@@ -1,19 +1,36 @@
 import requests
 
-class RemoteObject:
 
+class RemoteObject:
     def __init__(self, id=-1):
         self.id = id
 
 
+    # do a GET request for remote object by its specific id, grab the correct URL from the child class attribute
     def get_by_id(self, id):
         print(f'requesting at https://gorest.co.in/public/v2{self.url}{id}')
         response = requests.get(f'https://gorest.co.in/public/v2{self.url}{id}')
-        
+
         if response.status_code == 200:
             response_json = response.json()
             for key in response_json:
                 setattr(self, key, response_json[key])
+    
+
+    # child classes should call this to return a list of all remote objects of their type
+    def get_all(self):
+        print(f'requesting at https://gorest.co.in/public/v2{self.url}')
+        response = requests.get(f'https://gorest.co.in/public/v2{self.url}')
+
+        obj_list = []
+
+        if response.status_code == 200:
+            for obj in response.json():
+                obj_list.append(self.__class__(**obj))
+
+        return obj_list
+
+
 
     def post(self):
         pass
@@ -46,6 +63,24 @@ class Post(RemoteObject):
     def __str__(self):
         return f'[id: {self.id}, user_id: {self.user_id}, title: {self.title}, body: {self.body}]\n'
 
+    
+    # can be called with a user id parameter to get posts of user
+    def get_all(self, user_id=-1):
+        if user_id == -1:
+            return super().get_all()
+        else:
+            response = requests.get(f'https://gorest.co.in/public/v2/users/{user_id}/posts')
+            obj_list = []
+
+            if response.status_code == 200:
+                for obj in response.json():
+                    obj_list.append(self.__class__(**obj))
+
+            return obj_list
+        
+
+        
+
 
 class Comment(RemoteObject):
     url = '/comments/'
@@ -60,6 +95,21 @@ class Comment(RemoteObject):
     def __str__(self):
         return f'[id: {self.id}, post_id: {self.post_id}, name: {self.name}, email: {self.email}, body: {self.body}]\n'
 
+        # can be called with a user id parameter to get posts of user
+    def get_all(self, post_id=-1):
+        if post_id == -1:
+            return super().get_all()
+        else:
+            response = requests.get(f'https://gorest.co.in/public/v2/users/{post_id}/posts')
+            obj_list = []
+
+            if response.status_code == 200:
+                for obj in response.json():
+                    obj_list.append(self.__class__(**obj))
+
+            return obj_list
+
+
 class Todo(RemoteObject):
     url = '/todos/'
 
@@ -72,3 +122,17 @@ class Todo(RemoteObject):
     
     def __str__(self):
         return f'[id: {self.id}, user_id: {self.user_id}, title: {self.title}, due_on: {self.due_on}, status: {self.status}]\n'
+
+        # can be called with a user id parameter to get posts of user
+    def get_all(self, user_id=-1):
+        if user_id == -1:
+            return super().get_all()
+        else:
+            response = requests.get(f'https://gorest.co.in/public/v2/users/{user_id}/posts')
+            obj_list = []
+
+            if response.status_code == 200:
+                for obj in response.json():
+                    obj_list.append(self.__class__(**obj))
+
+            return obj_list
