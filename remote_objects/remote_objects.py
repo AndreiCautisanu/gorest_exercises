@@ -2,8 +2,30 @@ import requests
 
 
 class RemoteObject:
+
     def __init__(self, id=-1):
         self.id = id
+
+    
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, tb):
+        if not any([exc_type, exc_value, tb]):
+            print(f'deleting https://gorest.co.in/public/v2{self.url}{self.id}')
+
+            headers = {
+                'Authorization': 'Bearer a81345463eb65f45373d18174a0bf2750c85c6bbc2f4d4f687981c426ce0d47d'
+            }
+
+            response = requests.delete(f'https://gorest.co.in/public/v2{self.url}{self.id}', headers=headers)
+            if response.status_code == 204:
+                print('Remote object deleted')
+            else:
+                print(f'error deleting remote object, got code {response.status_code}')
+                
+        else:
+            print(exc_value)
 
 
     # do a GET request for remote object by its specific id, grab the correct URL from the child class attribute
@@ -39,6 +61,10 @@ class RemoteObject:
 
         url = 'https://gorest.co.in/public/v2' + self.url
         response = requests.post(url, headers=headers, data=self.__dict__)
+
+        if response.status_code == 201:
+            print('remote object successfully created')
+            self.id = response.json()['id']
 
         return response 
 
