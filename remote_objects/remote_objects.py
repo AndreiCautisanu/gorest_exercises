@@ -3,7 +3,7 @@ import requests
 
 class RemoteObject:
 
-    def __init__(self, id=-1):
+    def __init__(self, id=None):
         self.id = id
 
     
@@ -23,7 +23,7 @@ class RemoteObject:
                 print('Remote object deleted')
             else:
                 print(f'error deleting remote object, got code {response.status_code}')
-                
+
         else:
             print(exc_value)
 
@@ -72,7 +72,7 @@ class RemoteObject:
 class User(RemoteObject):
     url = '/users/'
 
-    def __init__(self, id=-1, name='', email='', gender='', status=''):
+    def __init__(self, id=None, name=None, email=None, gender=None, status=None):
         super().__init__(id)
         self.name = name
         self.email = email
@@ -87,7 +87,7 @@ class User(RemoteObject):
 class Post(RemoteObject):
     url = '/posts/'
     
-    def __init__(self, id=-1, user_id='', title='', body=''):
+    def __init__(self, id=None, user_id=None, title=None, body=None):
         super().__init__(id)
         self.user_id = user_id
         self.title = title
@@ -98,8 +98,8 @@ class Post(RemoteObject):
 
     
     # can be called with a user id parameter to get posts of user
-    def get_all(self, user_id=-1):
-        if user_id == -1:
+    def get_all(self, user_id=None):
+        if user_id == None:
             return super().get_all()
         else:
             response = requests.get(f'https://gorest.co.in/public/v2/users/{user_id}/posts')
@@ -118,7 +118,7 @@ class Post(RemoteObject):
 class Comment(RemoteObject):
     url = '/comments/'
 
-    def __init__(self, id=-1, post_id=-1, name='', email='', body=''):
+    def __init__(self, id=None, post_id=None, name=None, email=None, body=None):
         super().__init__(id)
         self.post_id = post_id
         self.name = name
@@ -129,8 +129,8 @@ class Comment(RemoteObject):
         return f'[id: {self.id}, post_id: {self.post_id}, name: {self.name}, email: {self.email}, body: {self.body}]\n'
 
         # can be called with a user id parameter to get posts of user
-    def get_all(self, post_id=-1):
-        if post_id == -1:
+    def get_all(self, post_id=None):
+        if post_id == None:
             return super().get_all()
         else:
             response = requests.get(f'https://gorest.co.in/public/v2/users/{post_id}/posts')
@@ -146,7 +146,7 @@ class Comment(RemoteObject):
 class Todo(RemoteObject):
     url = '/todos/'
 
-    def __init__(self, id=-1, user_id=-1, title='', due_on='', status=''):
+    def __init__(self, id=None, user_id=None, title=None, due_on=None, status=None):
         super().__init__(id)
         self.user_id = user_id
         self.title = title
@@ -157,8 +157,8 @@ class Todo(RemoteObject):
         return f'[id: {self.id}, user_id: {self.user_id}, title: {self.title}, due_on: {self.due_on}, status: {self.status}]\n'
 
         # can be called with a user id parameter to get posts of user
-    def get_all(self, user_id=-1):
-        if user_id == -1:
+    def get_all(self, user_id=None):
+        if user_id == None:
             return super().get_all()
         else:
             response = requests.get(f'https://gorest.co.in/public/v2/users/{user_id}/posts')
