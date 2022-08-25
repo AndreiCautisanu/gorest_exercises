@@ -1,25 +1,36 @@
-from remote_objects import RemoteObject, User, Post, Comment, Todo
+from remote_objects.remote_objects import RemoteObject, User, Post, Comment, Todo
 import requests
 
-# base_url = 'https://gorest.co.in/public/v2/'
-# user = User()
-# user.get_by_id(2783)
-# print(user.name)
+base_url = 'https://gorest.co.in/public/v2/'
 
-# print(user.get_all())
+with User() as user, Post() as post1:
+    user.get_by_id(2921)
+    print(str(user))
+    user.email = 'real_person_i_swear2@live.com'
+    user.name = 'Real Man Person'
+    user.status = 'inactive'
+    response = user.post()
+
+    if response.status_code == 422:
+        raise Exception('POST Data validation error')
+    if response.status_code == 401:
+        raise Exception('POST Authentication failed')
+
+    print(response.json())
+    print(str(user))
 
 
-# mister_scholz = User()
-# mister_scholz.get_by_id(3542)
-# mister_scholz.name = 'Olaf Scholz'
-# mister_scholz.status = 'active'
-# mister_scholz.email = 'the_actual_chancellor@live.com'
+    post1.get_by_id(1442)
+    print(str(post1))
+    post1.title = 'How to do things'
+    post1.body = 'aaaaaaaaaaa'
+    response = post1.post()
 
-# print(mister_scholz.post().json())
+    if response.status_code == 422:
+        raise Exception('POST Data validation error')
+    if response.status_code == 401:
+        raise Exception('POST Authentication failed')
 
-# response = requests.delete('https://gorest.co.in/public/v2/users/5539', headers={
-#             'Authorization': 'Bearer a81345463eb65f45373d18174a0bf2750c85c6bbc2f4d4f687981c426ce0d47d'
-#         })
+    print(response.json())
+    print(str(post1))
 
-# print(response)
-# print(response.text)
