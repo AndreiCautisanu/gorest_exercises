@@ -1,6 +1,6 @@
 import requests
-
-
+from backend_functions import backend_functions as bf
+import vars
 class RemoteObject:
 
     def __init__(self, id=None):
@@ -11,62 +11,55 @@ class RemoteObject:
         return self
 
     def __exit__(self, exc_type, exc_value, tb):
-        if not any([exc_type, exc_value, tb]):
-            print(f'deleting https://gorest.co.in/public/v2{self.url}{self.id}')
+        pass
+    #     if not any([exc_type, exc_value, tb]):
+    #         bf.DELETE(self.url + str(self.id), vars.headers)
 
-            headers = {
-                'Authorization': 'Bearer a81345463eb65f45373d18174a0bf2750c85c6bbc2f4d4f687981c426ce0d47d'
-            }
-
-            response = requests.delete(f'https://gorest.co.in/public/v2{self.url}{self.id}', headers=headers)
-            if response.status_code == 204:
-                print('Remote object deleted')
-            else:
-                print(f'error deleting remote object, got code {response.status_code}')
-
-        else:
-            print(exc_value)
+    #     else:
+    #         print(exc_value)
 
 
     # do a GET request for remote object by its specific id, grab the correct URL from the child class attribute
     def get_by_id(self, id):
-        print(f'requesting at https://gorest.co.in/public/v2{self.url}{id}')
-        response = requests.get(f'https://gorest.co.in/public/v2{self.url}{id}')
+        status_code, payload =  bf.GET(self.url, id)
+        if status_code == 200:
+            for key in payload:
+                setattr(self, key, payload[key])
 
-        if response.status_code == 200:
-            response_json = response.json()
-            for key in response_json:
-                setattr(self, key, response_json[key])
+            return self.__dict__
+        else:
+            print(f'GET error, got response status code {status_code}')
+            return None
+
     
 
     # child classes should call this to return a list of all remote objects of their type
     def get_all(self):
-        print(f'requesting at https://gorest.co.in/public/v2{self.url}')
-        response = requests.get(f'https://gorest.co.in/public/v2{self.url}')
-
+        status_code, payload = bf.GET(self.url)
         obj_list = []
 
-        if response.status_code == 200:
-            for obj in response.json():
+        if status_code == 200:
+            for obj in payload:
                 obj_list.append(self.__class__(**obj))
 
-        return obj_list
+            return obj_list
+        else:
+            print(f'GET error, got response status code {status_code}')
 
 
 
     def post(self):
-        headers = {
-            'Authorization': 'Bearer a81345463eb65f45373d18174a0bf2750c85c6bbc2f4d4f687981c426ce0d47d'
-        }
 
         url = 'https://gorest.co.in/public/v2' + self.url
-        response = requests.post(url, headers=headers, data=self.__dict__)
+        status_code, payload = bf.POST(self.url, vars.headers, self.__dict__)
 
-        if response.status_code == 201:
-            print('remote object successfully created')
-            self.id = response.json()['id']
+        if status_code == 201:
+            print(f'Remote object successfully created with id {payload["id"]}')
+            self.id = payload['id']
 
-        return response 
+            return self.__dict__ 
+        else:
+            print(f'POST error, got response status code {status_code}')
 
 
 class User(RemoteObject):
