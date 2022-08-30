@@ -3,15 +3,17 @@ import requests
 
 base_url = 'https://gorest.co.in/public/v2/'
 
-with User() as user, Post() as post1:
-    user.get_by_id(2600)
-    print(str(user))
-    user.email = 'real_person_i_2waa2ear2@live.com'
-    user.name = 'Real Man Personn'
-    user.status = 'inactive'
-    response = user.post()
+print(RemoteObject.get_all(type='users'))
 
-    print(str(user))
+# with User() as user, Post() as post1:
+#     user.get_by_id(2600)
+#     print(str(user))
+#     user.email = 'real_person_i_2waa2ear2@live.com'
+#     user.name = 'Real Man Personn'
+#     user.status = 'inactive'
+#     response = user.post()
+
+#     print(str(user))
 
 
     # post1.get_by_id(1442)
@@ -28,3 +30,6 @@ with User() as user, Post() as post1:
     # print(response.json())
     # print(str(post1))
 
+user = User()
+user.get_by_id(4002)
+print(user.name)

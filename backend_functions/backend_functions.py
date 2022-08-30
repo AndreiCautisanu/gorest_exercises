@@ -1,10 +1,10 @@
 import requests
+import vars
 
-base_url = 'https://gorest.co.in/public/v2'
 
 def GET(url: str, id: int = None):
-    print(f'Sending GET request at {base_url + url + (str(id) if id is not None else "")}...\n')
-    response = requests.get(base_url + url + (str(id) if id is not None else ''))
+    print(f'Sending GET request at {url + (str(id) if id is not None else "")}...\n')
+    response = requests.get(url + (str(id) if id is not None else ''))
     print(f'Request sent, received response {response.status_code}')
 
     return (response.status_code, response.json())

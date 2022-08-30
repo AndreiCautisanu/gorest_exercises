@@ -21,7 +21,7 @@ class RemoteObject:
 
     # do a GET request for remote object by its specific id, grab the correct URL from the child class attribute
     def get_by_id(self, id):
-        status_code, payload =  bf.GET(self.url, id)
+        status_code, payload =  bf.GET(vars.base_url + self.url + str(id))
         if status_code == 200:
             for key in payload:
                 setattr(self, key, payload[key])
@@ -34,13 +34,26 @@ class RemoteObject:
     
 
     # child classes should call this to return a list of all remote objects of their type
-    def get_all(self):
-        status_code, payload = bf.GET(self.url)
+    @staticmethod
+    def get_all(type='users', parent_id=None):
+
+        if parent_id is None:
+            url = vars.base_url + f'/{type}'
+        else:
+            if type == 'posts' or type == 'todos':
+                url = vars.base_url + '/users/' + f'{parent_id}/' + type
+            elif type == 'comments':
+                url = vars.base_url + '/posts/' + f'{parent_id}/' + type
+            else:
+                print('INVALID')
+                return
+
+        status_code, payload = bf.GET(url)
         obj_list = []
 
         if status_code == 200:
             for obj in payload:
-                obj_list.append(self.__class__(**obj))
+                obj_list.append(obj)
 
             return obj_list
         else:
@@ -49,7 +62,6 @@ class RemoteObject:
 
 
     def post(self):
-
         url = 'https://gorest.co.in/public/v2' + self.url
         status_code, payload = bf.POST(self.url, vars.headers, self.__dict__)
 
@@ -121,7 +133,7 @@ class Comment(RemoteObject):
     def __str__(self):
         return f'[id: {self.id}, post_id: {self.post_id}, name: {self.name}, email: {self.email}, body: {self.body}]\n'
 
-        # can be called with a user id parameter to get posts of user
+    # can be called with a user id parameter to get posts of user
     def get_all(self, post_id=None):
         if post_id == None:
             return super().get_all()
