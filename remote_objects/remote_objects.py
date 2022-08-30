@@ -100,23 +100,6 @@ class Post(RemoteObject):
 
     def __str__(self):
         return f'[id: {self.id}, user_id: {self.user_id}, title: {self.title}, body: {self.body}]\n'
-
-    
-    # can be called with a user id parameter to get posts of user
-    def get_all(self, user_id=None):
-        if user_id == None:
-            return super().get_all()
-        else:
-            response = requests.get(f'https://gorest.co.in/public/v2/users/{user_id}/posts')
-            obj_list = []
-
-            if response.status_code == 200:
-                for obj in response.json():
-                    obj_list.append(self.__class__(**obj))
-
-            return obj_list
-        
-
         
 
 
@@ -133,20 +116,6 @@ class Comment(RemoteObject):
     def __str__(self):
         return f'[id: {self.id}, post_id: {self.post_id}, name: {self.name}, email: {self.email}, body: {self.body}]\n'
 
-    # can be called with a user id parameter to get posts of user
-    def get_all(self, post_id=None):
-        if post_id == None:
-            return super().get_all()
-        else:
-            response = requests.get(f'https://gorest.co.in/public/v2/users/{post_id}/posts')
-            obj_list = []
-
-            if response.status_code == 200:
-                for obj in response.json():
-                    obj_list.append(self.__class__(**obj))
-
-            return obj_list
-
 
 class Todo(RemoteObject):
     url = '/todos/'
@@ -160,17 +129,3 @@ class Todo(RemoteObject):
     
     def __str__(self):
         return f'[id: {self.id}, user_id: {self.user_id}, title: {self.title}, due_on: {self.due_on}, status: {self.status}]\n'
-
-        # can be called with a user id parameter to get posts of user
-    def get_all(self, user_id=None):
-        if user_id == None:
-            return super().get_all()
-        else:
-            response = requests.get(f'https://gorest.co.in/public/v2/users/{user_id}/posts')
-            obj_list = []
-
-            if response.status_code == 200:
-                for obj in response.json():
-                    obj_list.append(self.__class__(**obj))
-
-            return obj_list
