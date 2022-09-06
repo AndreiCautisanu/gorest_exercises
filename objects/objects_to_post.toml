@@ -1,0 +1,19 @@
+[user]
+    [user.jonathan]
+    name = "Jonathan Banks"
+    email = "jb_extra@yahoo.com"
+    gender = "male"
+    status = "active"
+
+    [user.barbara]
+    name = "Barbara Barbing"
+    email = "call_me_barb@live.com"
+    gender = "female"
+    status = "active"
+
+
+[post]
+    [post.1]
+    user_id = 4544
+    title = "Long may he reign"
+    body = "Bless us all forever and ever and ever and ever and ever"

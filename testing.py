@@ -1,4 +1,4 @@
-from remote_objects.remote_objects import RemoteObject, User, Post, Comment, Todo
+from remote_objects import RemoteObject, User, Post, Comment, Todo
 import requests
 
 base_url = 'https://gorest.co.in/public/v2/'

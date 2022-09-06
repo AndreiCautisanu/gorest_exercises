@@ -1,6 +1,7 @@
 import requests
-from backend_functions import backend_functions as bf
+import backend_functions as bf
 import vars
+
 class RemoteObject:
 
     def __init__(self, id=None):

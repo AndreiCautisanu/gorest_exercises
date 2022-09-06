@@ -3,3 +3,10 @@ headers = {
 }
 
 base_url = 'https://gorest.co.in/public/v2'
+
+type_url = {
+    'user': '/users/',
+    'post': '/posts/',
+    'comment': '/comments/',
+    'todo': '/todos/'
+}
