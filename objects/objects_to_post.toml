@@ -1,19 +1,31 @@
 [user]
-    [user.jonathan]
-    name = "Jonathan Banks"
-    email = "jb_extra@yahoo.com"
+    [user.joffrey]
+    name = "Joffrey Baratheon"
+    email = "good_old_jb2@westeroslive.com"
     gender = "male"
     status = "active"
+    post = [
+        { title = "Cant wait for my wedding", body = "Hope nothing goes wrong"},
+        { title = "Oops I punished someone too harshly", body = "I am so silly"}
+    ]
 
-    [user.barbara]
-    name = "Barbara Barbing"
-    email = "call_me_barb@live.com"
+    [user.olenna]
+    name = "Olenna Tyrell"
+    email = "grandma_1@tyrell.wes"
     gender = "female"
     status = "active"
 
+    post = [
+        { title = "Little does he know", body = "hehe", comment = [{
+            name = "Hi", email = "AA@yahoo.com", body = "got him"
+        }]}
+    ]
+
 
 [post]
-    [post.1]
-    user_id = 4544
-    title = "Long may he reign"
-    body = "Bless us all forever and ever and ever and ever and ever"
+
+
+[comment]
+
+
+[todo]
