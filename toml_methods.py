@@ -8,9 +8,16 @@ from vars import base_url, type_url, headers
 def post_with_children(url, parent_obj, parent_obj_type):
     status_code, payload = bf.POST(url, headers, parent_obj)
     print(payload)
+
+    with open('response_code_log.txt', 'w') as f:
+        f.write(str(status_code) + '\n')
     
     if status_code == 201:
         id = payload['id']
+
+        with open('objs_log.txt', 'a') as f:
+            f.write(f'/{parent_obj_type}s/{id}\n')
+
         for key in ['user', 'post', 'comment', 'todo']:
             if key in parent_obj:
                 for obj in parent_obj[key]:
