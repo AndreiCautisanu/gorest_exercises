@@ -1,0 +1,20 @@
+[user]
+    [user.marcus]
+    name = "Marcus Rashford"
+    email = "Rashford_10@ggmu.com"
+    gender = "male"
+    status = "active"
+
+    [user.marcus.post]
+        [user.marcus.post.post1]
+        title = "Scored a goal today" 
+        body = "it was nice"
+        [user.marcus.post.post1.comment]
+            [user.marcus.post.post1.comment.comment1]
+            name = "Joe" 
+            email = "Joe@Joe.com"
+            body = "Great goal Marcus"
+
+        [user.marcus.post.post2]
+        title = "Ref sucks lol" 
+        body = "how is that ever a yellow"

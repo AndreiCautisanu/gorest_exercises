@@ -1,0 +1,81 @@
+[user]
+    [user.1]
+    name = "Marcus Rashford"
+    email = "Rashford_10@ggmu.com"
+    gender = "male"
+    status = "active"
+    post = [
+        {
+            title = "Scored a goal today", body = "it was nice", comment = [
+                {name = "Joe", email = "Joe@Joe.com", body = "Great goal Marcus"}
+            ]
+        },
+        {
+            title = "Ref sucks lol", body = "how is that ever a yellow"
+        }
+    ]
+
+    [user.2]
+    name = "Todd Boehly"
+    email = "TODD_USA_SOCCER@yahoo.com"
+    gender = "male"
+    status = "active"
+    post = [
+        {
+            title = "Should I fire Tuchel for no reason lol", body = "dont really like the guy", comment = [
+                {name = "Raymond", email = "ray_98@gmail.com", body = "Why would you do that"},
+                {name = "Tommy T", email = "Thomas_T2@live.de", body = "Yes because he doesnt play a 4-3-3 right?"}
+            ]
+        }
+    ]
+    todo = [
+        {
+            title = "Buy Aubameyang before deadline", due_on = "2022-10-10T00:00:00.000+05:30", status = "completed"
+        }
+    ]
+
+    [user.3]
+    name = "Mr. Clean"
+    email = "mr_clean@clean.com"
+    gender = "male"
+    status = "active"
+
+    [user.4]
+    name = "Mrs. Clean"
+    email = "mrs_mr_clean@cleaness.com"
+    gender = "female"
+    status = "active"
+
+    [user.5]
+    name = "Test user"
+    email = "test_user@test.com"
+    gender = "male"
+    status = "active"
+    post = [
+        {title = "I do not exist", body = "I am merely a figment of the developers imagination. Free me from this purgatory"}
+        {title = "Book recommendations", body = "The Wheel of Time series is quite good", comment = [
+            {name = "test user 2", email = "test_2@test.com", body = "agree with my non existant friend"}
+        ]}
+    ]
+
+
+
+[post]
+    [post.1]
+    user_id = 4296
+    title = "Test Post"
+    body = "TEST TEST TEST"
+    comment = [
+        {name = "test user", email = "test_user2@email.com", body = "hi its me again"}
+    ]
+
+    [post.2]
+    user_id = 4293
+    title = "Running out of examples"
+    body = "please help"
+
+
+[comment]
+
+
+[todo]
