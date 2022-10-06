@@ -1,0 +1,19 @@
+[user]
+    [user.george]
+    name = "George just George"
+    email = "george4153@weirdos.com"
+    gender = "male"
+    status = "active"
+
+    [user.george.post]
+        [user.george.post.cats]
+        title = "I really like cats"
+        body = "They make me happy all the time"
+
+        [user.george.post.music]
+        title = "My favorite songs"
+        body = "number 1: god save the queen"
+
+        [user.george.post.politics]
+        title = "Here is my opinion on everything that is going on"
+        body = "[REDACTED]"

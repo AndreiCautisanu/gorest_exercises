@@ -1,0 +1,30 @@
+[user]
+    [user.invalid_gender]
+    name = "Test Gender"
+    email = "gendered_email@hotmail.com"
+    gender = "INVALID"
+    status = "active"
+
+    [user.invalid_status]
+    name = "Test Status"
+    email = "status_email@hotmail.com"
+    gender = "male"
+    status = "FAR AWAY"
+
+    [user.new_email]
+    name = "John Doe"
+    email = "JDoe1@gmail.com"
+    gender = "male"
+    status = "active"
+
+    [user.duplicate_email]
+    name = "John Doe Jr."
+    email = "JDoe1@gmail.com"
+    gender = "male"
+    status = "active"
+
+[post]
+    [post.invalid_parent]
+    user_id = 286249782465198476
+    title = "Hello there"
+    body = "General Kenobi"

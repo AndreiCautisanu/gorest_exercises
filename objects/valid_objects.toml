@@ -1,0 +1,6 @@
+[user]
+    [user.danny]
+    name = "Daniel Day Lewis"
+    email = "ddlewis@actorsGuild.com"
+    gender = "male"
+    status = "active"

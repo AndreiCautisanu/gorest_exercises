@@ -1,10 +1,11 @@
 import pytest
 import backend_functions as bf
 import vars
+import toml
 
 
-class ValueStorage:
-    cached_obj1 = None
+class PostedObjs:
+    posted_objs = []
 
 
 def post_from_toml_nested(url, parent_obj, parent_obj_type):
@@ -29,6 +30,22 @@ def post_from_toml_nested(url, parent_obj, parent_obj_type):
     else:
         print(f'ERROR STATUS CODE {status_code}')
 
+
+
+@pytest.fixture()
+def invalid_objects():
+    data = toml.load(r'.\objects\invalid_objects.toml')
+    return data
+
+@pytest.fixture()
+def valid_objects():
+    data = toml.load(r'.\objects\valid_objects.toml')
+    return data
+
+@pytest.fixture()
+def user_with_posts():
+    data = toml.load(r'.\objects\user_with_posts.toml')
+    return data
 
 
 @pytest.fixture(scope='class')

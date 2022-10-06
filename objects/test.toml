@@ -1,5 +1,0 @@
-type = "User"
-name = "Frank Beckenbauer"
-email = "frank_bb@live.com"
-gender = "male"
-status = "active"

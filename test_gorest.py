@@ -1,5 +1,5 @@
+from urllib import response
 import pytest
-import toml_methods
 import backend_functions as bf
 import vars
 import toml
@@ -9,59 +9,45 @@ import re
 from copy import deepcopy
 
 
-
 class TestClass1:
 
-    def test_user_post(self, operations_log):
-        user1 = User(
-            name = "Abe Lincoln",
-            email = "Abez_Lingz_16@us.gov",
-            gender = "male",
-            status = "inactive"
-        )
-
+    def test_user_post_get_delete(self, operations_log, valid_objects):
+        user1 = User(**valid_objects['user']['danny'])
         status_code, payload = user1.post()
         with open('objs_log.txt', 'a') as f:
             f.write(f'/users/{user1.id}\n')
-        print(payload)
-
-        conftest.ValueStorage.cached_objs = [user1.__dict__]
 
         assert status_code == 201
 
 
+        # GET request on the id of the object just posted, check that correct data is returned
+        user2 = User()
+        status_code, _ = user2.get_by_id(user1.id)
+
+        assert (status_code == 200, all(user1.__dict__[key] == user2.__dict__[key] for key in ['name', 'email', 'gender', 'status'])) == (True, True)
 
 
-    def test_user_get(self, operations_log):
-        user1 = User()
-        with open('objs_log.txt', 'r') as f:
-            obj = f.read()
-
-        status_code, payload = user1.get_by_id((int(obj.split('/')[-1])))
-        
-        assert ((status_code == 200), (conftest.ValueStorage.cached_objs[0] == user1.__dict__)) == (True, True)
-
-
-
-
-    def test_user_patch(self, operations_log):
-        id = conftest.ValueStorage.cached_objs[0]['id']
-        status_code, payload = bf.PATCH(f'/users/{id}', headers = vars.headers, data = {"name": "Jack Wilshere"})
-
-        user1 = User()
-        user1.get_by_id(id)
-
-        assert (status_code == 200, user1.name == "Jack Wilshere") == (True, True)
-
-
-
-
-    def test_user_delete(self, operations_log):
-        user1 = User(**conftest.ValueStorage.cached_objs[0])
+        # DELETE user1, check that 404 is returned when trying to run GET on its ID
+        id = user1.id
         status_code_del = user1.delete()
-        status_code_get, payload = user1.get_by_id(conftest.ValueStorage.cached_objs[0]['id'])
+        status_code_get, _ = user1.get_by_id(id)
 
         assert ((status_code_del == 204), (status_code_get == 404)) == (True, True)
+
+
+
+    def test_user_patch(self, operations_log, valid_objects):
+        user1 = User(**valid_objects['user']['danny'])
+        status_code, _ = user1.post()
+        with open('objs_log.txt', 'a') as f:
+            f.write(f'/users/{user1.id}\n')
+        assert status_code == 201
+
+        status_code, payload = bf.PATCH(f'/users/{user1.id}', headers = vars.headers, data = {"name": "Jack Wilshere"})
+
+        user1.get_by_id(user1.id)
+
+        assert (status_code == 200, user1.name == "Jack Wilshere") == (True, True)
 
 
 
@@ -73,98 +59,85 @@ class TestClass2:
         assert ((status_code == 200), (len(users) > 0)) == (True, True)
 
 
-    def test_get_all_posts_of_user(self, operations_log):
-        posts = []
-        status_code, posts = Post.get_all(type='posts', parent_id=2409)
-        correct_parent = all(post['user_id'] == 2409 for post in posts)
+    def test_user_children_posts_get_delete(self, operations_log, user_with_posts):
+        for key in user_with_posts['user']:
+            conftest.post_from_toml_nested(vars.type_url['user'], user_with_posts['user'][key], 'user')
+        
+        obj_urls = []
+        with open('objs_log.txt', 'r') as f:
+            obj_urls = f.readlines()
+        
 
-        assert ((status_code == 200), correct_parent) == (True, True)
+        # parent_id of posted user
+        id = int(obj_urls[0].split('/')[2])
 
 
-    def test_delete_user_deletes_children(self, operations_log):
-        user1 = User(
-            name = "Roy Jones Jr",
-            email = "rjj@punches.com",
-            gender = "male",
-            status = "active"
-        )
+        #GET request to /users/<id>/posts, check if all objects are children of parent
+        response_code, post_list = Post.get_all(type = 'posts', parent_id = id)
+        assert response_code == 200
+        assert all(obj['user_id'] == id for obj in post_list)
 
-        status_code, payload = user1.post()
 
-        if status_code != 201:
-            pytest.xfail("failed to post parent object")
+        #Delete parent object and check that children are deleted too
+        user1 = User()
+        user1.get_by_id(id)
+        user1.delete()
 
-        post1 = Post(
-            user_id = user1.id,
-            title = "Hi I used to punch people",
-            body = "Made tons of money"
-        )
+        response_codes = []
+        for url in obj_urls[1:]:
+            post_id = int(url.split('/')[2])
 
-        post2 = Post(
-            user_id = user1.id,
-            title = "TEst Post AAAA",
-            body = "123abc123cvbv"
-        )
-        _, _ = post1.post()
-        _, _ = post2.post()
+            post1 = Post()
+            status_code, payload = post1.get_by_id(id = post_id)
+            response_codes.append(status_code)
 
-        status_code = user1.delete()
-        if status_code != 204:
-            pytest.xfail('failed to delete')
+        assert all(code == 404 for code in response_codes)
 
-        sc1, payload = post1.get_by_id(post1.id)
-        sc2, payload = post2.get_by_id(post2.id)
-
-        assert ((sc1 == 404), (sc2 == 404)) == (True, True)
+        
 
 
 
 class TestClass3:
     def test_user_get_invalid_id(self, operations_log):
         user1 = User()
-        status_code, payload = user1.get_by_id(1365231246)
+        status_code, _ = user1.get_by_id(1365231246)
         assert status_code == 404
 
     
-    def test_user_post_invalid_gender_value(self, operations_log):
-        user1 = User(
-            name = "Mr T",
-            email = "mrt4@TTTinc.com",
-            gender = "male",
-            status = "active"
-        )
-
-        _, _ = user1.post()
-        conftest.ValueStorage.cached_objs = [deepcopy(user1)]
-
-        user1.gender = "NOT A POLITICAL STATEMENT"
+    def test_user_post_invalid_gender_value(self, operations_log, invalid_objects):
+        user1 = User(**invalid_objects['user']['invalid_gender'])
         status_code, payload = user1.post()
 
         assert ((status_code == 422), ("can be male of female" in payload[0]['message'])) == (True, True)
 
     
-    def test_user_post_invalid_status_value(self, operations_log):
-        user1 = deepcopy(conftest.ValueStorage.cached_objs[0])
-        user1.status = "FAR AWAY"
+
+    def test_user_post_invalid_status_value(self, operations_log, invalid_objects):
+        user1 = User(**invalid_objects['user']['invalid_status'])
         status_code, payload = user1.post()
+
         assert ((status_code == 422), ("can't be blank" in payload[0]['message'])) == (True, True)
 
 
-    def test_user_post_duplicate_email(self, operations_log):
-        user1 = deepcopy(conftest.ValueStorage.cached_objs[0])
-        user1.email = 'mrt4@TTTinc.com'
+
+    def test_user_post_duplicate_email(self, operations_log, invalid_objects):
+        #Create user with valid email
+        user1 = User(**invalid_objects['user']['new_email'])
         status_code, payload = user1.post()
+        assert status_code == 201
+        with open('objs_log.txt', 'a') as f:
+            f.write(f'/users/{user1.id}\n')
+
+
+        #Create new user with the same email
+        user2 = User(**invalid_objects['user']['duplicate_email'])
+        status_code, payload = user2.post()
         
         assert ((status_code == 422), ("has already been taken" in payload[0]['message'])) == (True, True)
 
 
-    def test_post_invalid_parent_user(self, operations_log):
-        post1 = Post(
-            user_id = 99999999,
-            title = 'Testing testing',
-            body = 'aaaaaaaaaaaaaaaaaaaaaaa'
-        )
-
+    def test_post_invalid_parent_user(self, operations_log, invalid_objects):
+        post1 = Post(**invalid_objects['post']['invalid_parent'])
         status_code, payload = post1.post()
 
         assert ((status_code == 422), ("must exist" in payload[0]['message'])) == (True, True)
@@ -176,19 +149,15 @@ class TestClass3:
         assert status_code == 404
 
 
-    def test_user_post_to_invalid_url(self, operations_log):
-        user1 = deepcopy(conftest.ValueStorage.cached_objs[0])
+    def test_user_post_to_invalid_url(self, operations_log, valid_objects):
+        user1 = User(**valid_objects['user']['danny'])
         status_code, payload = bf.POST('/posts/', vars.headers, user1.__dict__)
 
         assert ((status_code == 422), (len(payload) == 4)) == (True, True)
 
     
-    def test_user_post_invalid_bearer(self, operations_log):
-        user1 = deepcopy(conftest.ValueStorage.cached_objs[0])
+    def test_user_post_invalid_bearer(self, operations_log, valid_objects):
+        user1 = User(**valid_objects['user']['danny'])
         status_code, payload = bf.POST('/users/', {'Authorization': 'AAAAAAAAAAAAAAA'}, user1.__dict__)
 
         assert status_code == 401
-
-
-    
-    
