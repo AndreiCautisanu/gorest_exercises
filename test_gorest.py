@@ -1,12 +1,8 @@
 from urllib import response
-import pytest
 import backend_functions as bf
 import vars
-import toml
 from remote_objects import User, Post, Comment, Todo
 import conftest
-import re
-from copy import deepcopy
 
 
 class TestClass1:
